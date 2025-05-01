@@ -113,7 +113,9 @@ const ChatInterface: React.FC = () => {
         setSessionId(data.session_id);
       }
 
-    } catch (err: unknown) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (err: any) {
       console.error('Failed to send message:', err);
       setError(`Failed to get response: ${err.message}`);
       // Optionally add the error message back to the chat
