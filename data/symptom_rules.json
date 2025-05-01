@@ -1,0 +1,70 @@
+{
+  "comment": "Placeholder structure - Manually populate based on CDC/NHS guidelines",
+  "symptoms": {
+    "chest_pain": {
+      "query": "Are you experiencing sudden, severe chest pain, possibly radiating to your arm or jaw?",
+      "default_triage": "DoctorSoon",
+      "rules": [
+        {
+          "conditions": {"radiating": true, "severity": "severe", "duration_minutes": ">5"},
+          "triage": "ER",
+          "explanation": "Severe, radiating chest pain lasting more than 5 minutes could indicate a heart attack."
+        }
+      ]
+    },
+    "rash": {
+      "query": "Do you have a new rash?",
+      "default_triage": "SelfCare",
+      "rules": [
+        {
+          "conditions": {"accompanied_by": ["fever", "difficulty_breathing"]},
+          "triage": "ER",
+          "explanation": "Rash with fever and difficulty breathing can be a sign of a severe allergic reaction or infection."
+        },
+        {
+          "conditions": {"accompanied_by": ["fever"]},
+          "triage": "DoctorSoon",
+          "explanation": "A rash accompanied by fever should be evaluated by a doctor."
+        }
+      ]
+    },
+    "fever": {
+      "query": "Do you have a fever? What is your temperature?",
+       "default_triage": "SelfCare",
+       "rules": [
+           {
+             "conditions": {"temperature_c": ">40"},
+             "triage": "ER",
+             "explanation": "A very high fever (above 40°C or 104°F) requires immediate medical attention."
+            },
+           {
+             "conditions": {"temperature_c": ">38", "duration_days": ">3"},
+             "triage": "DoctorSoon",
+             "explanation": "A fever lasting more than 3 days should be checked by a doctor."
+           },
+           {
+             "conditions": {"accompanied_by": ["stiff_neck", "severe_headache", "confusion"]},
+             "triage": "ER",
+             "explanation": "Fever with symptoms like stiff neck, severe headache, or confusion could indicate meningitis."
+           }
+       ]
+    }
+  },
+  "general_red_flags": [
+    {
+      "symptoms": ["difficulty_breathing", "shortness_of_breath"],
+      "triage": "ER",
+      "explanation": "Difficulty breathing always requires emergency evaluation."
+    },
+    {
+      "symptoms": ["uncontrolled_bleeding"],
+      "triage": "ER",
+      "explanation": "Uncontrolled bleeding is a medical emergency."
+    },
+    {
+      "symptoms": ["sudden_numbness", "weakness", "difficulty_speaking", "facial_drooping"],
+      "triage": "ER",
+      "explanation": "These could be signs of a stroke and require immediate emergency care."
+    }
+  ]
+} 

@@ -1,0 +1,65 @@
+# Environment variables
+.env*
+!.env.example
+
+# Python
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*/*/*/*/__pycache__/
+*.py[cod]
+*$py.class
+
+# Python Virtual Environments
+.venv
+env
+venv
+ENV
+env.bak
+venv.bak
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+
+# Data files (prevent checking in potentially large/sensitive data)
+data/synthea_output/
+data/downloaded/
+data/chroma_db/
+
+# Build artifacts / Distribution
+/dist
+/build
+*.egg-info/
+.eggs/
+
+# Other
+*.log
+.coverage
+.pytest_cache/ 
+*.zip

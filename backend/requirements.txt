@@ -1,0 +1,32 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+
+# Langchain + Google
+langchain
+langchain-google-genai
+google-generativeai
+
+# Vector Store
+chromadb
+
+# Database
+psycopg2-binary
+SQLAlchemy
+
+# Background tasks (Choose one)
+apscheduler
+# celery
+# redis # if using celery
+
+# Optional: Rate Limiting
+# fastapi-limiter
+
+# Optional: Email/SMS
+# sendgrid
+
+# Data Processing
+# beautifulsoup4 # for HTML parsing (Merck)
+# lxml # for XML parsing (MedlinePlus)
+# requests # for API calls (openFDA) 
