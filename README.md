@@ -186,59 +186,8 @@ MedAssist/
 
 ## 6. Architectural Design
 
-```mermaid
-graph TD
-    subgraph User Interface
-        A[Web Browser / User]
-    end
-
-    subgraph MedAssist Application
-        subgraph Frontend (Next.js / React)
-            B[Chat Interface]
-        end
-
-        subgraph Backend (FastAPI / Python)
-            C[FastAPI Application]
-            D[LangChain Agent]
-            E[Tools]
-            F[Database CRUD (SQLAlchemy)]
-            G[Reminder Scheduler (APScheduler)]
-        end
-    end
-
-    subgraph Data Stores
-        H[PostgreSQL Database]
-        I[ChromaDB Vector Store]
-        J[Symptom Rules (JSON)]
-    end
-
-    subgraph External Services
-        K[Google Gemini API]
-    end
-
-    A -- HTTP/S Requests --> B
-    B -- API Calls (HTTP/S) --> C
-    C -- Invokes --> D
-    D -- Uses --> E
-    E -- Interacts with --> F
-    E -- Queries --> I
-    E -- Reads --> J
-    D -- Calls --> K
-    F -- Reads/Writes --> H
-    G -- Reads/Writes --> H
-    G -- Periodically Checks --> H
-
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#bbf,stroke:#333,stroke-width:2px
-    style D fill:#bbf,stroke:#333,stroke-width:2px
-    style E fill:#bbf,stroke:#333,stroke-width:2px
-    style F fill:#bbf,stroke:#333,stroke-width:2px
-    style G fill:#bbf,stroke:#333,stroke-width:2px
-    style H fill:#ccf,stroke:#333,stroke-width:2px
-    style I fill:#ccf,stroke:#333,stroke-width:2px
-    style J fill:#ccf,stroke:#333,stroke-width:2px
-    style K fill:#cfc,stroke:#333,stroke-width:2px
+```markdown
+![MedAssist Architectural Diagram](frontend/public/architecture_diagram.png)
 ```
 
 ## 7. API Endpoints
