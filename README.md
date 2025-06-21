@@ -187,7 +187,7 @@ MedAssist/
 ## 6. Architectural Design
 
 ```markdown
-![MedAssist Architectural Diagram](frontend/public/architecture_diagram.png)
+![MedAssist Architectural Diagram](https://github.com/sgessesse/MedAssist/blob/main/frontend/public/architecture_diagram.png)
 ```
 
 ## 7. API Endpoints
