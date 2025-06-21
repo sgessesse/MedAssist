@@ -85,7 +85,7 @@ MedAssist/
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/your-username/MedAssist.git
     cd MedAssist
     ```
 
@@ -184,7 +184,153 @@ MedAssist/
 
 *(Note: A `docker-compose.yml` example is not provided here but would define services for the backend, frontend, and potentially the database, linking them together and managing environment variables.)*
 
-## 6. Future Work / Improvements
+## 6. Architectural Design
+
+```mermaid
+graph TD
+    subgraph User Interface
+        A[Web Browser / User]
+    end
+
+    subgraph MedAssist Application
+        subgraph Frontend (Next.js / React)
+            B[Chat Interface]
+        end
+
+        subgraph Backend (FastAPI / Python)
+            C[FastAPI Application]
+            D[LangChain Agent]
+            E[Tools]
+            F[Database CRUD (SQLAlchemy)]
+            G[Reminder Scheduler (APScheduler)]
+        end
+    end
+
+    subgraph Data Stores
+        H[PostgreSQL Database]
+        I[ChromaDB Vector Store]
+        J[Symptom Rules (JSON)]
+    end
+
+    subgraph External Services
+        K[Google Gemini API]
+    end
+
+    A -- HTTP/S Requests --> B
+    B -- API Calls (HTTP/S) --> C
+    C -- Invokes --> D
+    D -- Uses --> E
+    E -- Interacts with --> F
+    E -- Queries --> I
+    E -- Reads --> J
+    D -- Calls --> K
+    F -- Reads/Writes --> H
+    G -- Reads/Writes --> H
+    G -- Periodically Checks --> H
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bbf,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
+    style G fill:#bbf,stroke:#333,stroke-width:2px
+    style H fill:#ccf,stroke:#333,stroke-width:2px
+    style I fill:#ccf,stroke:#333,stroke-width:2px
+    style J fill:#ccf,stroke:#333,stroke-width:2px
+    style K fill:#cfc,stroke:#333,stroke-width:2px
+```
+
+## 7. API Endpoints
+
+The MedAssist backend exposes the following primary API endpoints:
+
+*   **Chat Endpoints (`/api/v1/chat`)**
+    *   `POST /api/v1/chat`: Handles incoming chat messages, processes them through the LangChain agent, and returns the AI's response.
+        *   **Request Body:** `ChatRequest` (user_id, message, session_id)
+        *   **Response Body:** `ChatResponse` (reply, session_id, sources, triage_tag)
+
+*   **Reminder Endpoints (`/api/v1/reminders`)**
+    *   `POST /api/v1/reminders`: Creates a new reminder in the database.
+        *   **Request Body:** `ReminderCreate` (patient_id, reminder_type, message, due_at, method)
+        *   **Response Body:** `ReminderRead` (id, patient_id, reminder_type, message, due_at, method, created_at, sent_at)
+    *   `GET /api/v1/reminders/patient/{patient_id}`: Retrieves a list of reminders for a specific patient.
+        *   **Path Parameter:** `patient_id` (integer)
+        *   **Query Parameters:** `skip` (integer), `limit` (integer), `include_sent` (boolean)
+        *   **Response Body:** List of `ReminderRead`
+    *   `GET /api/v1/reminders/{reminder_id}`: Retrieves a specific reminder by its ID.
+        *   **Path Parameter:** `reminder_id` (integer)
+        *   **Response Body:** `ReminderRead`
+    *   `DELETE /api/v1/reminders/{reminder_id}`: Deletes a specific reminder by its ID.
+        *   **Path Parameter:** `reminder_id` (integer)
+        *   **Response:** 204 No Content on success
+
+*   **Scheduling Endpoints (`/api/v1/schedule`)**
+    *   `POST /api/v1/schedule`: Creates a new appointment in the database.
+        *   **Request Body:** `AppointmentCreate` (patient_id, appointment_time, reason, provider_name)
+        *   **Response Body:** `AppointmentRead` (id, patient_id, appointment_time, reason, provider_name, created_at)
+    *   `GET /api/v1/schedule/patient/{patient_id}`: Retrieves a list of appointments for a specific patient.
+        *   **Path Parameter:** `patient_id` (integer)
+        *   **Query Parameters:** `skip` (integer), `limit` (integer)
+        *   **Response Body:** List of `AppointmentRead`
+    *   `GET /api/v1/schedule/{appointment_id}`: Retrieves a specific appointment by its ID.
+        *   **Path Parameter:** `appointment_id` (integer)
+        *   **Response Body:** `AppointmentRead`
+    *   `DELETE /api/v1/schedule/{appointment_id}`: Deletes a specific appointment by its ID.
+        *   **Path Parameter:** `appointment_id` (integer)
+        *   **Response:** 204 No Content on success
+
+## 8. Database Schema
+
+The application uses a PostgreSQL database managed with SQLAlchemy and Alembic. Key tables include:
+
+*   **`patients`**: Stores patient information.
+    *   `id` (Primary Key)
+    *   `synthea_id` (Unique identifier, e.g., from Synthea data)
+    *   `first_name`
+    *   `last_name`
+    *   `date_of_birth`
+    *   `gender`
+    *   `email`
+    *   `phone_number`
+    *   `address`
+    *   `created_at`
+    *   `updated_at`
+*   **`appointments`**: Stores scheduled appointments.
+    *   `id` (Primary Key)
+    *   `patient_id` (Foreign Key to `patients.id`)
+    *   `appointment_time` (Timestamp)
+    *   `reason` (Text description)
+    *   `provider_name`
+    *   `created_at`
+*   **`reminders`**: Stores user reminders.
+    *   `id` (Primary Key)
+    *   `patient_id` (Foreign Key to `patients.id`, can be NULL for guest reminders)
+    *   `reminder_type` (e.g., 'generic', 'medication')
+    *   `message` (The reminder text)
+    *   `due_at` (Timestamp when reminder is due)
+    *   `method` (e.g., 'system', 'email', 'sms')
+    *   `created_at`
+    *   `sent_at` (Timestamp when reminder was processed/sent)
+
+## 9. Contributing
+
+Contributions are welcome! If you'd like to contribute, please follow these steps:
+
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature-name`).
+3.  Make your changes and ensure tests pass.
+4.  Commit your changes (`git commit -m 'Add new feature'`).
+5.  Push to the branch (`git push origin feature/your-feature-name`).
+6.  Open a Pull Request.
+
+Please ensure your code adheres to the existing style and includes appropriate tests.
+
+## 10. License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 11. Future Work / Improvements
 
 *   Implement user authentication (e.g., JWT).
 *   Develop a proper patient registration flow.
@@ -192,4 +338,4 @@ MedAssist/
 *   Enhance appointment scheduling (check availability, provider selection).
 *   Improve UI/UX (loading states, error handling, component design).
 *   Add comprehensive unit and integration tests.
-*   Set up CI/CD pipeline for automated testing and deployment. 
+*   Set up CI/CD pipeline for automated testing and deployment.
